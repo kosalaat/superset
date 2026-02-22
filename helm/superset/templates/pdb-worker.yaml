@@ -19,7 +19,7 @@
 
 {{- with .Values.supersetWorker.podDisruptionBudget }}
 {{- if .enabled -}}
-{{- if and .minAvailable .maxUnavailable }}
+{{- if and (gt (int64 .minAvailable) 0) (gt (int64 .maxUnavailable)  0)}}
   {{- fail "Only one of minAvailable or maxUnavailable should be set" }}
 {{- end}}
 apiVersion: policy/v1
@@ -35,10 +35,10 @@ metadata:
       {{- toYaml $.Values.extraLabels | nindent 4 }}
     {{- end }}
 spec:
-  {{- if .minAvailable }}
+  {{- if (gt (int64 .minAvailable) 0) }}
   minAvailable: {{ .minAvailable }}
   {{- end }}
-  {{- if .maxUnavailable }}
+  {{- if (gt (int64 .maxUnavailable)  0) }}
   maxUnavailable: {{ .maxUnavailable }}
   {{- end }}
   selector:
